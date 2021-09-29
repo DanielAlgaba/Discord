@@ -1,5 +1,6 @@
 import discord
 import random
+import glob
 
 client = discord.Client()
 quotes = [
@@ -77,7 +78,13 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
-    msg = message.content
+
+    if message.content.startswith(".image"):
+        images = glob.glob(".\ArtOfHaloInfiniteHD\*.jpg")
+        random_image = random.choice(images)
+        await message.channel.send(
+            "There you go, Marine!", file=discord.File(random_image),
+        )
 
     if message.content.startswith(".sir"):
         await message.channel.send(random.choice(quotes))
