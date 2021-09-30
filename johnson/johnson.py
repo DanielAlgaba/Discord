@@ -1,3 +1,4 @@
+import os
 import discord
 import random
 import glob
@@ -26,4 +27,4 @@ async def on_message(message):
         await message.channel.send(random.choice(quotes))
 
 
-client.run("ODkyNTIwNTk0MTI0NDcyMzIx.YVOGkw.1zFM9BrJDzONP0wooQ7zLGhWnqc")
+client.run(os.environ["DISCORD_TOKEN"])
