@@ -16,7 +16,7 @@ async def on_message(message):
     if message.author == client.user:
         return
     if message.content.startswith(".image"):
-        images = glob.glob(".\ArtOfHaloInfiniteHD\*.jpg")
+        images = glob.glob(".\johnson\ArtOfHaloInfiniteHD\*.jpg")
         random_image = random.choice(images)
         await message.channel.send(
             "There you go, Marine!", file=discord.File(random_image),
