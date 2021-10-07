@@ -33,6 +33,18 @@ async def on_message(message):
         await message.channel.send(
             f"There are {delta.days} days left for me to be born!"
         )
+    if message.content.startswith(".infinite"):
+        d = date(2021, 12, 8)
+        today = date.today()
+        if today < d:
+            delta = d - today
+            await message.channel.send(
+                f"There are {delta.days} days left for Halo Infinite launch!"
+            )
+        else:
+            await message.channel.send(
+                f"Halo Infinite is out! What are you waiting for Marine?! Go play right now!"
+            )
 
 
 client.run(os.environ["DISCORD_TOKEN"])
