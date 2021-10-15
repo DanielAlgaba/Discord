@@ -106,6 +106,7 @@ async def on_message(message):
             playlists = stats["data"]["campaign"]["playlists"]["completed"]
             playlists_kills = stats["data"]["campaign"]["playlists"]["kills"]
             playlists_deaths = stats["data"]["campaign"]["playlists"]["deaths"]
+
             await message.channel.send(
                 (
                     f"{player} has completed {missions} missions, has killed "
@@ -119,6 +120,81 @@ async def on_message(message):
                     f"has killed {playlists_kills} enemies and "
                     f"has died {playlists_deaths} times in playlists."
                 )
+            )
+        except KeyError:
+            await message.channel.send(
+                (
+                    "An error has occurred! You have not written any Gamertag"
+                    " or the one you have entered does not exit!"
+                )
+            )
+
+    if message.content.startswith(".infinite"):
+        d = date(2021, 12, 8)
+        today = date.today()
+        if today < d:
+            delta = d - today
+            await message.channel.send(
+                f"There are {delta.days} days left for Halo Infinite launch!"
+            )
+        else:
+            await message.channel.send(
+                (
+                    "Halo Infinite is out! What are you waiting for Marine?!"
+                    " Go play right now!"
+                )
+            )
+
+    # The bot sends a message with the Master Chief Collection multiplayer
+    # stats of the gamertag selected
+    if message.content.startswith(".multiplayer"):
+        try:
+            player = message.content.split("multiplayer")[1].lstrip()
+            access_token = os.environ["HALOAPI_TOKEN"]
+            url = (
+                f"https://cryptum.halodotapi.com/games/hmcc/"
+                f"stats/players/{player}/service-record"
+            )
+            headers = {
+                "Content-Type": "application/json",
+                "Cryptum-API-Version": "2.3-alpha",
+                "Authorization": f"Cryptum-Token {access_token}",
+            }
+            response = requests.request("GET", url, headers=headers)
+            print(response.text)
+            stats = json.loads(response.text)
+            matches = stats["data"]["multiplayer"]["total_matches"]
+            kd_ratio = stats["data"]["multiplayer"]["kdr"]
+            kills = stats["data"]["multiplayer"]["summary"]["kills"]
+            deaths = stats["data"]["multiplayer"]["summary"]["deaths"]
+            assists = stats["data"]["multiplayer"]["summary"]["assists"]
+            wins = stats["data"]["multiplayer"]["summary"]["wins"]
+            loses = stats["data"]["multiplayer"]["summary"]["losses"]
+            if loses > 0:
+                wl_ratio = wins / loses
+            else:
+                wl_ratio = wins
+            rank_pl = stats["data"]["multiplayer"]["ranked"]["highest_rank"]["playlist"]
+            rank_level = stats["data"]["multiplayer"]["ranked"]["highest_rank"]["rank"]
+
+            await message.channel.send(
+                (
+                    f"{player} has a k/d of {str(round(kd_ratio, 2))} "
+                    f"with {kills} kills, {deaths} deaths and "
+                    f"{assists} assists."
+                )
+            )
+            await message.channel.send(
+                (
+                    f"{player} has a win/lose ratio "
+                    f"of {str(round(wl_ratio, 2))} "
+                    f"in {matches} matches. "
+                    f"{player} has won {wins} matches and"
+                    f" has lost {loses} matches."
+                )
+            )
+            await message.channel.send(
+                f"{player} max rank was {rank_level} in {rank_pl}."
             )
         except KeyError:
             await message.channel.send(
