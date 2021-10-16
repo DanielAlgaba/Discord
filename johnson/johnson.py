@@ -38,6 +38,10 @@ async def on_message(message):
                 "- .infinite:\t\t  days left for Halo Infinite release.\n"
                 "- .camaign:\t\tfollowed by a Gamertag"
                 " to see its campaign stats.\n"
+                "- .multiplayer:\tfollowed by a Gamertag "
+                "to see its multiplayer stats\n"
+                "- .avatar:\t\t\tfollowed by a Gamertag to see "
+                "its emblem, avatar, clan tag and service tag\n"
             )
         )
 
@@ -161,7 +165,6 @@ async def on_message(message):
                 "Authorization": f"Cryptum-Token {access_token}",
             }
             response = requests.request("GET", url, headers=headers)
-            print(response.text)
             stats = json.loads(response.text)
             matches = stats["data"]["multiplayer"]["total_matches"]
             kd_ratio = stats["data"]["multiplayer"]["kdr"]
@@ -196,6 +199,39 @@ async def on_message(message):
             await message.channel.send(
                 f"{player} max rank was {rank_level} in {rank_pl}."
             )
+        except KeyError:
+            await message.channel.send(
+                (
+                    "An error has occurred! You have not written any Gamertag"
+                    " or the one you have entered does not exit!"
+                )
+            )
+
+    # The bot sends a message with the Master Chief Collection emblem,
+    # clan tag and avatar of the gamertag selected
+    if message.content.startswith(".avatar"):
+        try:
+            player = message.content.split("avatar")[1].lstrip()
+            access_token = os.environ["HALOAPI_TOKEN"]
+            url = (
+                f"https://cryptum.halodotapi.com/games/hmcc/"
+                f"appearance/players/{player}"
+            )
+            headers = {
+                "Content-Type": "application/json",
+                "Cryptum-API-Version": "2.3-alpha",
+                "Authorization": f"Cryptum-Token {access_token}",
+            }
+            response = requests.request("GET", url, headers=headers)
+            stats = json.loads(response.text)
+            clan = stats["data"]["clan_tag"]
+            emblem = stats["data"]["emblem_url"]
+            avatar = stats["data"]["avatar_url"]
+            tag = stats["data"]["service_tag"]
+
+            await message.channel.send(emblem)
+            await message.channel.send((f"[{clan}] {player} {tag} "))
+            await message.channel.send(avatar)
         except KeyError:
             await message.channel.send(
                 (
