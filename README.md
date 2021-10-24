@@ -1,7 +1,7 @@
 Sergeant Major Avery Junior Johnson: a Discord bot
 ========
 
-![Image]()
+![Image](https://github.com/DanielAlgaba/discord_johnson/blob/main/johnson/ArtOfHaloInfiniteHD/avery-johnson.jpg)
 
 Introduction
 ----------
